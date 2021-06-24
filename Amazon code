@@ -1,0 +1,53 @@
+import lxml as lxml
+from bs4 import BeautifulSoup
+import requests
+HEADERS = ({'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+            'Accept-Language': 'en-US, en;q=0.5'})
+
+
+
+def asinprices(asin_nums):
+    for asin in asin_nums:
+        page_CAD = requests.get("https://www.amazon.ca/dp/" + asin + "/", headers=HEADERS)
+        page_US = requests.get("https://www.amazon.com/dp/" + asin + "/", headers=HEADERS)
+        if page_US and page_CAD:
+            soup_CAD = BeautifulSoup(page_CAD.content, features="lxml")
+            soup_US = BeautifulSoup(page_US.content, features="lxml")
+            if soup_CAD.find(id="price_inside_buybox") and soup_US.find(id="price_inside_buybox"):
+                price_CAD = float(
+                    soup_CAD.find(id="price_inside_buybox").get_text().replace("CDN", "").replace("$", ""))
+                price_USD = float(soup_US.find(id="price_inside_buybox").get_text().replace("$", ""))
+                if price_CAD and price_USD:
+                    price_CAD = str(price_CAD)
+                    price_USD = str(price_USD)
+                    print("Canadian Price for item " + asin + " is " + price_CAD + " and the US price is " + price_USD
+                          )
+            elif soup_CAD.find(id="priceblock_ourprice") and soup_US.find(id="price_inside_buybox"):
+                price_CAD = float(
+                    soup_CAD.find(id= "priceblock_ourprice").get_text().replace("CDN", "").replace("$", ""))
+                price_USD = float(soup_US.find(id="price_inside_buybox").get_text().replace("$", ""))
+                if price_CAD and price_USD:
+                    price_CAD = str(price_CAD)
+                    price_USD = str(price_USD)
+                    print("Canadian Price for item " + asin + " is " + price_CAD + " and the US price is " + price_USD
+                          )
+            elif soup_CAD.find(id="priceblock_ourprice") and soup_US.find(id="priceblock_ourprice"):
+                price_CAD = float(
+                    soup_CAD.find(id="priceblock_ourprice").get_text().replace("CDN", "").replace("$", ""))
+                price_USD = float(soup_US.find(id="priceblock_ourprice").get_text().replace("$", ""))
+                if price_CAD and price_USD:
+                    price_CAD = str(price_CAD)
+                    price_USD = str(price_USD)
+                    print("Canadian Price for item " + asin + " is " + price_CAD + " and the US price is " + price_USD
+                          )
+
+            elif soup_CAD.find(id="price_inside_buybox") and soup_US.find(id="priceblock_ourprice"):
+                price_CAD = float(
+                    soup_CAD.find(id="price_inside_buybox").get_text().replace("CDN", "").replace("$", ""))
+                price_USD = float(soup_US.find(id="priceblock_ourprice").get_text().replace("$", ""))
+                if price_CAD and price_USD:
+                    price_CAD = str(price_CAD)
+                    price_USD = str(price_USD)
+                    print("Canadian Price for item " + asin + " is " + price_CAD + " and the US price is " + price_USD
+                          )
